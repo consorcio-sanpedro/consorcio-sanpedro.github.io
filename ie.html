@@ -1,0 +1,448 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><style>:root{color-scheme:light}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Protocolo San Pedro · Eléctrica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0B0F14; --bg2:#10161D; --line:rgba(232,225,207,.14); --line2:rgba(232,225,207,.32);
+  --ink:#E8E1CF; --mute:#8E949A; --gold:#C9A24B; --teal:#8FC1AE; --red:#C25A52;
+  --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-weight:300;font-size:17px;line-height:1.65;padding-inline:16px;padding-block:0;overflow-x:hidden;min-height:100vh}
+body.locked{overflow:hidden;height:100vh}
+#plan{position:fixed;inset:0;pointer-events:none;z-index:0;background:url(img/plano.jpg) center/cover no-repeat;opacity:.07;filter:sepia(1) hue-rotate(15deg) saturate(.6) brightness(1.1)}
+#ring{position:fixed;left:50%;top:50%;width:min(140vmax,1400px);height:min(140vmax,1400px);transform:translate(-50%,-50%);pointer-events:none;z-index:0;opacity:.5}
+#ring svg{width:100%;height:100%;animation:turn 900s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+#ring line,#ring circle{stroke:var(--ink);fill:none}
+#veil{position:fixed;inset:0;z-index:30;background:var(--bg);pointer-events:none;opacity:0;transition:opacity 1.6s ease}
+#veil.on{opacity:1}
+
+/* GATE */
+#gate{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:24px 16px;overflow:auto;transition:opacity 1.2s}
+#gate.off{opacity:0;pointer-events:none}
+.gate-in{width:min(100%,600px);display:grid;gap:22px;text-align:center;position:relative;padding:44px 28px;border:1px solid var(--line)}
+.gate-in::before,.gate-in::after{content:"";position:absolute;width:18px;height:18px;border:1px solid var(--gold)}
+.gate-in::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.gate-in::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.gate-in .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.gate-in h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,6vw,58px);line-height:1.05;margin:0;letter-spacing:.005em;text-wrap:balance}
+.gate-in p{margin:0 auto;color:var(--mute);max-width:32em}
+.slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.slot{width:42px;height:54px;border-bottom:1px solid var(--line2);display:grid;place-items:center;font-family:var(--serif);font-size:32px;font-weight:600;color:var(--ink);transition:border-color .3s,color .3s}
+.slot.f{border-bottom-color:var(--ink)}
+.slot.ok{border-bottom-color:var(--gold);color:var(--gold)}
+.slot.bad{border-bottom-color:var(--red)}
+form.key{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+label.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+input,textarea{background:transparent;border:1px solid var(--line2);color:var(--ink);font-family:var(--sans);font-size:16px;padding:12px 14px;min-width:0}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+input#clave{flex:1 1 220px;max-width:320px;font-family:var(--mono);font-size:18px;letter-spacing:.3em;text-transform:uppercase;text-align:center}
+button{background:var(--ink);color:#0B0F14;border:0;font-family:var(--sans);font-weight:500;font-size:14px;letter-spacing:.16em;text-transform:uppercase;padding:13px 22px;cursor:pointer}
+button:hover{background:#fff}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+button:disabled{opacity:.45;cursor:default}
+button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line2);font-size:12px;padding:8px 14px}
+button.ghost:hover{color:var(--ink);border-color:var(--ink);background:transparent}
+.status{font-family:var(--mono);font-size:12.5px;min-height:1.5em;color:var(--mute);white-space:pre-line;letter-spacing:.02em}
+.status.bad{color:var(--red)}
+.status.ok{color:var(--gold)}
+.hints{display:grid;gap:8px;justify-items:center}
+.hint{display:none;font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink);max-width:30em;animation:rise .6s ease-out both}
+.hint.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#verif{font-family:var(--mono);font-size:12px;color:var(--mute);text-align:left;display:grid;gap:4px;margin:0 auto;max-width:30em}
+#verif div{opacity:0;transition:opacity .4s}
+#verif div.on{opacity:1}
+#verif b{color:var(--gold);font-weight:500}
+
+/* JOURNEY */
+.hud{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);background:linear-gradient(var(--bg) 55%,transparent);opacity:0;transition:opacity 1.2s}
+body.open .hud{opacity:1}
+.hud b{color:var(--ink);font-weight:500}
+.hud .bar{flex:1;max-width:260px;height:1px;background:var(--line);position:relative}
+.hud .bar i{position:absolute;inset:0 auto 0 0;background:var(--gold);width:0}
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+main[hidden]{display:none}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+h1.big{font-family:var(--serif);font-weight:500;font-size:clamp(48px,9vw,120px);line-height:.98;margin:0;letter-spacing:-.005em;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:500;font-size:clamp(30px,4.6vw,48px);line-height:1.08;margin:.3em 0 .45em;text-wrap:balance}
+.lede{font-size:clamp(17px,2vw,20px);color:var(--mute);max-width:34em;margin:0}
+.lede strong{color:var(--ink);font-weight:400}
+.rule{height:1px;background:var(--line);margin:0}
+
+.hero{min-height:94vh;display:grid;align-content:end;padding-block:120px 70px;gap:28px;position:relative}
+.hero .art{position:absolute;inset:60px 0 auto 0;height:min(60vh,520px);pointer-events:none;opacity:.55}
+.hero .art img{width:100%;height:100%;object-fit:contain;object-position:right top}
+.hero .text{display:grid;gap:22px;max-width:760px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-top:1px solid var(--line2);max-width:960px}
+.stat{padding:16px 14px 16px 0;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.stat b{font-family:var(--serif);font-size:clamp(28px,3.4vw,40px);font-weight:500;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.stat span{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.scrollcue{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--mute);text-transform:uppercase;display:flex;gap:12px;align-items:center}
+.scrollcue::before{content:"";width:48px;height:1px;background:var(--gold)}
+
+.draw{--p:1}
+.line{position:relative}
+.line img{display:block;width:100%;height:auto;-webkit-mask-image:linear-gradient(100deg,#000 0,#000 calc(var(--p) * 130% - 30%),transparent calc(var(--p) * 130%));mask-image:linear-gradient(100deg,#000 0,#000 calc(var(--p) * 130% - 30%),transparent calc(var(--p) * 130%))}
+.line .cap{position:absolute;left:0;bottom:-26px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);opacity:calc(var(--p) * 2 - 1)}
+.line .cap b{color:var(--gold);font-weight:500}
+.sheet{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:48px;align-items:center;padding-block:12vh}
+.sheet.rev .copy{order:2}
+.copy{display:grid;gap:10px;transform:translateY(calc((1 - var(--p)) * 30px));opacity:calc(var(--p) * 1.4 - .2)}
+.copy p{margin:0;color:#C9C4B4;max-width:32em}
+.copy ol{margin:12px 0 0;padding:0;list-style:none;display:grid;border-top:1px solid var(--line2)}
+.copy li{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);color:#C9C4B4;font-size:16px}
+.copy li i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--gold);padding-top:5px}
+.readout{margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+
+.harmony{padding-block:10vh;display:grid;gap:26px}
+.harmony .head{max-width:700px}
+.harmony .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center}
+.harmony svg{width:100%;height:auto;display:block}
+.harmony svg .l{fill:none;stroke:var(--ink);stroke-width:.8;stroke-opacity:.55;stroke-dasharray:1 1;stroke-dashoffset:calc(1 - var(--p))}
+.harmony svg .g{fill:none;stroke:var(--gold);stroke-width:1.4;stroke-dasharray:1 1;stroke-dashoffset:calc(1 - var(--p))}
+.harmony svg .c{fill:none;stroke:var(--ink);stroke-width:.8;stroke-opacity:.5}
+.harmony svg .n{fill:var(--bg);stroke:var(--ink);stroke-width:.9}
+.harmony svg .n.me{fill:var(--gold);stroke:var(--gold)}
+.harmony svg text{font-family:var(--mono);font-size:8.6px;letter-spacing:.06em;fill:var(--mute);text-transform:uppercase}
+.harmony svg text.me{fill:var(--gold)}
+.harmony svg .center{font-family:var(--serif);font-size:15px;fill:var(--ink);letter-spacing:0;text-transform:none}
+.harmony .list{display:grid;border-top:1px solid var(--line2)}
+.harmony .list div{display:grid;grid-template-columns:42px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px;color:#C9C4B4}
+.harmony .list div i{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--mute);padding-top:4px}
+.harmony .list div.me{color:var(--ink)}
+.harmony .list div.me i{color:var(--gold)}
+
+.gallery{padding-block:8vh;display:grid;gap:34px}
+.gallery .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 22px}
+.gallery figure{margin:0;--p:1}
+
+.orders{padding-block:12vh 6vh;max-width:800px}
+.orders .eyebrow{color:var(--red)}
+.oath{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(30px,4.8vw,54px);line-height:1.15;margin:.35em 0 .7em;text-wrap:balance}
+.oath span{color:var(--gold);font-style:normal}
+.orders p{font-size:18px;color:#C9C4B4;max-width:36em;margin:0 0 1em}
+.orders p strong{color:var(--ink);font-weight:400}
+
+.reco{margin-block:4vh 6vh;display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:start;border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);padding:28px 0;max-width:800px}
+.seal{width:78px;height:78px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:600;color:var(--gold);font-size:15px;letter-spacing:.14em;position:relative}
+.seal::after{content:"";position:absolute;inset:6px;border:1px solid rgba(201,162,75,.4);border-radius:50%}
+.reco h3{font-family:var(--serif);font-weight:500;font-size:26px;margin:0 0 .3em}
+.reco p{margin:0 0 .7em;color:#C9C4B4}
+.reco .meta{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase}
+
+.final{padding-block:6vh 14vh;max-width:800px}
+.final .eyebrow{color:var(--teal)}
+.final p{font-size:18px;color:#C9C4B4;max-width:36em}
+.accept{display:grid;gap:14px;margin-top:26px;border:1px solid var(--line2);padding:24px}
+.accept .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.accept label{display:grid;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.accept input,.accept textarea{width:100%}
+.accept textarea{min-height:80px;resize:vertical}
+.accept .cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.final button.big{font-size:15px;padding:15px 26px;background:var(--gold);color:#0B0F14}
+.final button.big:hover{background:#D9B45F}
+.confirm{display:none;gap:14px;border-left:1px solid var(--gold);padding-left:16px}
+.confirm.on{display:grid}
+.confirm .code{white-space:pre-wrap;font-family:var(--mono);font-size:12.5px;color:var(--ink);padding:14px;border:1px solid var(--line);letter-spacing:0;text-transform:none}
+.confirm .btns{display:flex;gap:10px;flex-wrap:wrap}
+.confirm a.btn{display:inline-block;background:var(--ink);color:#0B0F14;text-decoration:none;font-family:var(--sans);font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px}
+.confirm a.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line2)}
+.sealed{display:none;font-family:var(--serif);font-size:clamp(22px,4vw,34px);letter-spacing:.3em;color:var(--gold);text-transform:uppercase;border:1px solid var(--gold);padding:8px 18px 8px 22px;justify-self:start}
+.sealed.on{display:inline-block;animation:stamp .6s ease-out both}
+@keyframes stamp{from{opacity:0;transform:scale(1.15)}to{opacity:1;transform:none}}
+.sign{margin-top:34px;font-family:var(--serif);font-size:22px;letter-spacing:.3em;color:var(--gold)}
+.sign small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--mute);margin-top:6px;text-transform:uppercase}
+footer{position:relative;z-index:1;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--mute);padding-block:30px 44px;text-transform:uppercase}
+footer[hidden]{display:none}
+
+@media (max-width:760px){
+  .sheet{grid-template-columns:1fr;gap:34px;padding-block:8vh}
+  .sheet.rev .copy{order:0}
+  .harmony .wrap{grid-template-columns:1fr}
+  .reco{grid-template-columns:1fr}
+  .hud .bar{display:none}
+  .slot{width:34px;height:46px;font-size:26px}
+  .gallery .grid{grid-template-columns:1fr}
+  .accept .row{grid-template-columns:1fr}
+  .hero .art{opacity:.35}
+  .gate-in{padding:32px 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  #ring svg,.sealed.on{animation:none}
+  .copy,.gallery figure{transform:none!important;opacity:1!important}
+  .line img{mask-image:none;-webkit-mask-image:none}
+  .harmony svg .l,.harmony svg .g{stroke-dasharray:none}
+}
+</style>
+
+<div id="plan" aria-hidden="true"></div>
+<div id="ring" aria-hidden="true"><svg viewBox="0 0 1000 1000" id="ringsvg"></svg></div>
+<div id="veil" aria-hidden="true"></div>
+
+<section id="gate" aria-label="Compuerta de acceso">
+  <div class="gate-in">
+    <div class="eyebrow" id="geyebrow">Consorcio San Pedro · Compuerta de acceso</div>
+    <h1>La palabra está en la tarjeta.</h1>
+    <p>Mírala con calma, a buena luz. No es un enigma: es una prueba de atención. Cuando la encuentres, escríbela.</p>
+    <div class="slots" id="slots" aria-hidden="true"></div>
+    <form class="key" id="lockform" autocomplete="off">
+      <label class="sr" for="clave">Palabra de la tarjeta</label>
+      <input id="clave" name="clave" type="text" maxlength="16" spellcheck="false" autocapitalize="characters" placeholder="PALABRA">
+      <button type="submit" id="btnkey">Verificar</button>
+    </form>
+    <div class="status" id="status" aria-live="polite">Esta compuerta se abre una sola vez.</div>
+    <div class="hints" id="hints">
+      <div class="hint" id="h1">Los matices de la tarjeta no son azar.</div>
+      <div class="hint" id="h2">Entre los verdes hay tonos que se apartan. Síguelos.</div>
+      <div class="hint" id="h3"></div>
+    </div>
+    <div id="verif"></div>
+    <div class="hints"><button type="button" class="ghost" id="btnhint">Necesito una pista</button></div>
+  </div>
+</section>
+
+<div class="hud" role="presentation">
+  <span><b>CSP</b> · Protocolo San Pedro</span>
+  <span class="bar"><i id="barfill"></i></span>
+  <span id="hudspec">—</span>
+</div>
+
+<main id="journey" hidden>
+  <section class="hero">
+    <div class="art line draw" id="heroart"><img src="img/l_v01.png" alt=""></div>
+    <div class="text">
+      <div class="eyebrow" id="heyebrow">Consorcio San Pedro convoca</div>
+      <h1 class="big">Fuiste convocado.</h1>
+      <p class="lede">Al proyecto que va a cambiar la forma en que se abastece una región: el <strong>Mercado de Abastos San Pedro de Tacna</strong>, 11.86 hectáreas en el Sector Pago Para Grande. No es una obra más. Es la clase de obra que una ciudad levanta una vez por generación, y la que cada uno de nosotros recordará como la más importante de su vida.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>118,577</b><span>m² de terreno</span></div>
+      <div class="stat"><b>+400</b><span>puestos minoristas · 2 niveles</span></div>
+      <div class="stat"><b>4</b><span>plataformas mayoristas</span></div>
+      <div class="stat"><b>3</b><span>plataformas de productores</span></div>
+      <div class="stat"><b>16 m</b><span>camiones en patio de maniobras</span></div>
+      <div class="stat"><b>15</b><span>especialidades convocadas</span></div>
+    </div>
+    <div class="scrollcue">Desplázate · el expediente se dibuja contigo</div>
+  </section>
+
+  <section class="sheet draw" id="s-proyecto">
+    <div class="copy">
+      <div class="eyebrow">Lámina AG-01 · Planimetría general</div>
+      <h2>Una ciudad dentro de la ciudad.</h2>
+      <p>Un óvalo organizador articula el mercado minorista, cuatro plataformas mayoristas, la zona de productores, el banco de alimentos, el laboratorio de control de calidad, la planta de residuos y los patios para camiones de 16 metros. Ingreso peatonal por la Av. Zarumilla, carga por la Av. Caplina, salida por la Calle Jorge Chávez.</p>
+      <div class="readout">Pendiente 2.5 % · plataformas +0.00 · +1.40 · +1.95 · +3.15 · +4.55 · +5.60</div>
+    </div>
+    <div class="line"><img src="img/l_v01.png" alt="Vista aérea del conjunto dibujada en líneas"><span class="cap"><b>01</b> Vuelo de pájaro · planimetría</span></div>
+  </section>
+
+  <section class="harmony draw">
+    <div class="head">
+      <div class="eyebrow">Armonía de especialidades</div>
+      <h2>Ninguna especialidad basta sola. Todas juntas, bastan.</h2>
+      <p class="lede">Quince disciplinas alrededor de una misma obra. Cada línea es una dependencia real: lo que una calcula, otra lo construye; lo que una protege, otra lo comunica. Tu lugar está marcado.</p>
+    </div>
+    <div class="wrap">
+      <svg viewBox="0 0 520 520" id="hsvg" role="img" aria-label="Diagrama de las doce especialidades alrededor del proyecto"></svg>
+      <div class="list" id="hlist"></div>
+    </div>
+  </section>
+
+  <section class="sheet rev draw" id="s-esp">
+    <div class="copy">
+      <div class="eyebrow" id="scode"></div>
+      <h2 id="stitle"></h2>
+      <p id="stext"></p>
+      <ol id="sfrentes"></ol>
+      <div class="readout" id="sreadout"></div>
+    </div>
+    <div class="line"><img id="simg" src="" alt=""><span class="cap" id="scap"></span></div>
+  </section>
+
+  <section class="gallery">
+    <div>
+      <div class="eyebrow">Vistas del conjunto</div>
+      <h2>Esto es lo que vamos a levantar.</h2>
+    </div>
+    <div class="grid">
+      <figure class="line draw"><img src="img/l_v02.png" alt="Ingreso vehicular de carga, dibujo en líneas"><span class="cap"><b>02</b> Ingreso de carga · Av. Caplina</span></figure>
+      <figure class="line draw"><img src="img/l_v04.png" alt="Ingreso peatonal al mayorista, dibujo en líneas"><span class="cap"><b>03</b> Ingreso peatonal · Mayorista</span></figure>
+      <figure class="line draw"><img src="img/l_v06.png" alt="Módulos del mercado mayorista, dibujo en líneas"><span class="cap"><b>04</b> Módulos mayoristas</span></figure>
+    </div>
+  </section>
+
+  <section class="orders">
+    <div class="eyebrow">Orden del día</div>
+    <p class="oath">No te convocamos para un encargo. <span>Te convocamos para la obra de tu vida.</span></p>
+    <p>Un mercado de abastos de esta escala no se diseña con oficio. Se diseña con convicción. Estructura, suelo, arquitectura, energía, agua, ambiente, seguridad, patrimonio, comunicación, administración, datos y gestión tienen que cerrar en un solo sistema, con plazos que no perdonan y con una región entera del otro lado, esperando comer mejor, vender mejor y vivir mejor.</p>
+    <p><strong>La mayoría mira una obra así y da un paso atrás. Nosotros vamos a dar el paso al frente.</strong></p>
+    <p>No buscamos muchos. Buscamos a quienes revisan el cálculo por tercera vez cuando nadie los mira, a quienes defienden un criterio técnico aunque incomode, a quienes entienden que una obra pública es una promesa firmada con el nombre propio. Encontraste la palabra en la tarjeta. Ya demostraste la primera cualidad: atención.</p>
+  </section>
+
+  <aside class="reco" aria-label="Recomendación especial">
+    <div class="seal">REC</div>
+    <div>
+      <h3>Recomendación especial</h3>
+      <p>Tu nombre no llegó por casualidad. Llegó por recomendación directa de alguien que te vio trabajar bajo presión y no dudó: <em>esta persona tiene que estar en el equipo</em>.</p>
+      <p>Esa confianza es tu primera credencial. La segunda se gana en campo.</p>
+      <div class="meta">Proyecto de muy alta complejidad · Carácter reservado · Consorcio San Pedro</div>
+    </div>
+  </aside>
+
+  <section class="final" id="final">
+    <div class="eyebrow">Compuerta final</div>
+    <h2>Tu lugar en la mesa está reservado.</h2>
+    <p>Vamos a enfrentar algo que pocos se atreven a construir, y lo vamos a hacer con rigor técnico, con ética y con la frente en alto. La obra empieza con un sí.</p>
+    <form class="accept" id="acceptform">
+      <div class="row">
+        <label>Nombres<input id="anombre" name="nombres" type="text" required autocomplete="given-name" placeholder="Tus nombres"></label>
+        <label>Apellidos<input id="aapellido" name="apellidos" type="text" required autocomplete="family-name" placeholder="Tus apellidos"></label>
+      </div>
+      <div class="row">
+        <label>Especialidad<input id="aesp" name="especialidad" type="text" readonly></label>
+      </div>
+      <label>Mensaje (opcional)<textarea id="amsg" name="mensaje" placeholder="Una línea, si quieres decir algo."></textarea></label>
+      <div class="cta">
+        <button type="submit" class="big" id="btnaccept">Acepto el llamado</button>
+        <span class="sealed" id="sealed">Sellado</span>
+      </div>
+      <div class="confirm" id="confirm">
+        <div class="status ok">Tu aceptación quedó sellada en pantalla. Confírmala ahora en el formulario del Consorcio: se abre con tus datos ya puestos; completa lo que falte y pulsa Enviar.</div>
+        <div class="btns" id="cbtns"></div>
+        <div class="code" id="ctext"></div>
+      </div>
+    </form>
+    <div class="sign">CSP<small>Consorcio San Pedro · Tacna · MMXXVI</small></div>
+  </section>
+</main>
+
+<footer id="foot" hidden>Protocolo San Pedro · documento reservado · no reenviar</footer>
+
+<script>
+(function(){
+  const CONFIG = {
+    form: 'https://docs.google.com/forms/d/e/1FAIpQLSftU2XvnMdzVyuPUVgN-R_zAO28z-8NMZqB3hbl9hRvjxom5w/viewform',
+    f: { nombres:'entry.2054941306', apellidos:'entry.855874305', mensaje:'entry.488987952', comentarios:'entry.2085983308' } };
+  const ALL = [
+    ['e','Ingeniería Estructural'],['gt','Ing. Geológica y Geotécnica'],['a','Arquitectura'],['ie','Ingeniería Eléctrica'],
+    ['em','Ingeniería Electromecánica'],['is','Ingeniería Sanitaria'],['am','Ingeniería Ambiental'],['sst','Seguridad y Salud en el Trabajo'],
+    ['ar','Arqueología'],['com','Comunicación y Relaciones Públicas'],['adm','Administración y Contabilidad'],['dss','Data, Seguridad y Control'],['atp','Asistencia Técnica Profesional'],['cp','Coordinación de Proyecto'],['pmo','Gestión PMO']
+  ];
+  const SPEC = {"short": "Eléctrica", "name": "Ingeniería Eléctrica", "code": "Lámina IE-01", "img": "img/l_v04.png", "cap": "Ingreso peatonal al mercado mayorista", "title": "La energía que nadie ve y todos necesitan.", "text": "Cerca de mil puestos, cámaras de frío, laboratorio de alimentos, sistema de pesaje y patios iluminados toda la noche. Si se diseña bien, nadie lo nota. Si se diseña mal, lo nota toda la región.", "frentes": ["Subestación, tableros y distribución en media y baja tensión para todo el conjunto", "Iluminación de naves, óvalo, patios de maniobra y estacionamientos", "Sistema de pesaje, control de accesos, cámaras de frío y respaldo de energía"], "readout": "CNE Utilización · EM.010 · 10 kV / 0.38-0.22 kV", "key": "ie", "word": "TENSION"};
+  const WORD = SPEC.word;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+  const body = document.body; body.classList.add('locked');
+  let phase = 'gate';
+
+  /* specialty fill */
+  $('#geyebrow').textContent = 'Consorcio San Pedro · ' + SPEC.name;
+  $('#heyebrow').textContent = 'Consorcio San Pedro convoca · ' + SPEC.name;
+  $('#hudspec').textContent = SPEC.name;
+  $('#scode').textContent = SPEC.code + ' · ' + SPEC.name;
+  $('#stitle').textContent = SPEC.title; $('#stext').textContent = SPEC.text;
+  $('#sfrentes').innerHTML = SPEC.frentes.map((f,i) => '<li><i>0' + (i+1) + '</i><span>' + f + '</span></li>').join('');
+  $('#sreadout').textContent = SPEC.readout;
+  $('#simg').src = SPEC.img; $('#simg').alt = SPEC.cap + ', dibujo en líneas';
+  $('#scap').innerHTML = '<b>' + SPEC.code.replace('Lámina ','') + '</b> ' + SPEC.cap;
+  $('#aesp').value = SPEC.name;
+  $('#h3').textContent = WORD.length + ' letras. Empieza por ' + WORD[0] + '.';
+
+  /* theodolite ring */
+  (function(){ const s = $('#ringsvg'); let h = '';
+    for (const r of [480,440,300]) h += `<circle cx="500" cy="500" r="${r}" stroke-opacity=".18"/>`;
+    for (let i=0;i<360;i+=2){ const a=i*Math.PI/180, l = i%30===0?26:(i%10===0?14:6); const x1=500+Math.cos(a)*480, y1=500+Math.sin(a)*480, x2=500+Math.cos(a)*(480-l), y2=500+Math.sin(a)*(480-l);
+      h += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke-opacity="${i%30===0?.5:.22}"/>`; }
+    h += '<line x1="500" y1="20" x2="500" y2="980" stroke-opacity=".08"/><line x1="20" y1="500" x2="980" y2="500" stroke-opacity=".08"/>';
+    s.innerHTML = h; })();
+
+  /* gate */
+  const slotsEl = $('#slots'), input = $('#clave'), status = $('#status'), gate = $('#gate');
+  for (let i=0;i<WORD.length;i++){ const d=document.createElement('div'); d.className='slot'; slotsEl.appendChild(d); }
+  const slots = [...slotsEl.children];
+  const norm = v => v.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z]/gi,'').toUpperCase();
+  input.addEventListener('input', () => { const v = norm(input.value); slots.forEach((s,i)=>{ s.textContent = v[i]||''; s.classList.toggle('f', i < v.length); s.classList.remove('bad'); }); });
+  let tries = 0, hintLevel = 0;
+  function showHint(n){ hintLevel = Math.min(3, Math.max(hintLevel, n)); for (let i=1;i<=3;i++) $('#h'+i).classList.toggle('on', i<=hintLevel); if (hintLevel>=3) $('#btnhint').disabled = true; }
+  $('#btnhint').addEventListener('click', ()=> showHint(hintLevel+1));
+  function fail(){ tries++; slots.forEach(s=>s.classList.add('bad')); status.className = 'status bad';
+    const msgs = ['No es esa palabra. Vuelve a la tarjeta.','No es esa. Mírala con más calma, cambia la luz, aléjala un poco.','No es esa. El sistema empieza a ayudarte.'];
+    status.textContent = msgs[Math.min(tries-1,2)] + '   [' + tries + ']'; if (tries>=3) showHint(tries-2); input.select(); }
+  const wait = ms => new Promise(r=>setTimeout(r, reduce? 0 : ms));
+  async function success(){
+    phase = 'verify'; input.disabled = true; $('#btnkey').disabled = true; $('#btnhint').disabled = true;
+    status.className = 'status ok'; status.textContent = 'Palabra reconocida.';
+    for (let i=0;i<slots.length;i++){ slots[i].classList.remove('bad','f'); slots[i].classList.add('ok'); await wait(110); }
+    const ver = $('#verif'); ver.innerHTML = '';
+    const steps = ['Atención verificada.','Recomendación especial cotejada.','Especialidad: <b>' + SPEC.name + '</b>.','Consorcio San Pedro abre el expediente.'];
+    for (const s of steps){ const d=document.createElement('div'); d.innerHTML=s; ver.appendChild(d); await wait(120); d.classList.add('on'); await wait(520); }
+    await wait(400);
+    const veil = $('#veil'); veil.classList.add('on'); await wait(1500);
+    gate.classList.add('off'); $('#journey').hidden = false; $('#foot').hidden = false;
+    body.classList.remove('locked'); body.classList.add('open'); phase = 'open'; window.scrollTo(0,0);
+    setupJourney(); await wait(300); veil.classList.remove('on');
+  }
+  $('#lockform').addEventListener('submit', e => { e.preventDefault(); if (phase!=='gate') return; if (norm(input.value) === WORD) success(); else fail(); });
+  setTimeout(()=>input.focus(), 400);
+
+  /* journey */
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const draws = [...document.querySelectorAll('.draw')];
+  const pct = $('#barfill');
+  function onScroll(){ if (phase!=='open') return; const vh = window.innerHeight; const max = document.documentElement.scrollHeight - vh; const g = max > 0 ? clamp(window.scrollY / max) : 1; pct.style.width = (g*100)+'%'; if (reduce) return;
+    for (const s of draws){ const r = s.getBoundingClientRect(); const start = vh*0.95, end = vh*0.45 - Math.min(r.height, vh*0.5)/2; s.style.setProperty('--p', clamp((start - r.top) / (start - end)).toFixed(3)); }
+    const ha = $('#heroart'); ha.style.setProperty('--p', clamp((performance.now() - openedAt)/3200).toFixed(3)); }
+  let openedAt = 0;
+  window.addEventListener('scroll', onScroll, {passive:true}); window.addEventListener('resize', onScroll);
+  let ready = false;
+  function setupJourney(){ if (ready) return; ready = true; openedAt = performance.now();
+    if (!reduce){ (function tick(){ onScroll(); if (performance.now() - openedAt < 3600) requestAnimationFrame(tick); })(); }
+    buildHarmony(); }
+
+  /* harmony diagram */
+  function buildHarmony(){
+    const s = $('#hsvg'), cx=260, cy=260, R=200; let h = '';
+    const pts = ALL.map((sp,i) => { const a = -Math.PI/2 + i*2*Math.PI/ALL.length; return {k:sp[0], name:sp[1], x:cx+Math.cos(a)*R, y:cy+Math.sin(a)*R, a}; });
+    h += `<circle class="c" cx="${cx}" cy="${cy}" r="${R}"/><circle class="c" cx="${cx}" cy="${cy}" r="${R+14}" stroke-dasharray="2 5"/><circle class="c" cx="${cx}" cy="${cy}" r="46"/>`;
+    // dependencies: every node to center, neighbors, and a few structural cross-links
+    for (const p of pts) h += `<line class="${p.k===SPEC.key?'g':'l'}" pathLength="1" x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${cx}" y2="${cy}"/>`;
+    for (let i=0;i<pts.length;i++){ const a=pts[i], b=pts[(i+1)%pts.length]; h += `<line class="l" pathLength="1" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}"/>`; }
+    const cross = [['e','gt'],['e','a'],['a','ie'],['ie','em'],['is','am'],['sst','cp'],['cp','pmo'],['pmo','com'],['ar','gt'],['a','is'],['em','is'],['com','cp'],['adm','pmo'],['adm','cp'],['dss','ie'],['dss','a'],['atp','cp'],['atp','e']];
+    const P = Object.fromEntries(pts.map(p=>[p.k,p]));
+    for (const [x,y] of cross){ const a=P[x], b=P[y]; const me = (x===SPEC.key||y===SPEC.key); h += `<line class="${me?'g':'l'}" pathLength="1" x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}"/>`; }
+    for (const p of pts){ const me = p.k===SPEC.key; h += `<circle class="n${me?' me':''}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${me?6:4}"/>`;
+      const lx = cx+Math.cos(p.a)*(R+30), ly = cy+Math.sin(p.a)*(R+30); const anchor = Math.abs(Math.cos(p.a))<.2 ? 'middle' : (Math.cos(p.a)>0?'start':'end');
+      h += `<text class="${me?'me':''}" x="${lx.toFixed(1)}" y="${(ly+3).toFixed(1)}" text-anchor="${anchor}">${p.k.toUpperCase()}</text>`; }
+    h += `<text class="center" x="${cx}" y="${cy-4}" text-anchor="middle">Mercado</text><text class="center" x="${cx}" y="${cy+14}" text-anchor="middle">San Pedro</text>`;
+    s.innerHTML = h;
+    $('#hlist').innerHTML = ALL.map(sp => `<div class="${sp[0]===SPEC.key?'me':''}"><i>${sp[0].toUpperCase()}</i><span>${sp[1]}</span></div>`).join('');
+  }
+
+  /* acceptance */
+  $('#acceptform').addEventListener('submit', e => {
+    e.preventDefault();
+    const nombres = $('#anombre').value.trim(), apellidos = $('#aapellido').value.trim();
+    if (!nombres) { $('#anombre').focus(); return; } if (!apellidos) { $('#aapellido').focus(); return; }
+    const msg = $('#amsg').value.trim();
+    const fecha = new Date().toLocaleString('es-PE', {dateStyle:'medium', timeStyle:'short'});
+    const aceptacion = `ACEPTO EL LLAMADO · PROTOCOLO SAN PEDRO · ${SPEC.name} · ${fecha} · Palabra de la tarjeta: ${WORD}`;
+    const texto = `ACEPTO EL LLAMADO · PROTOCOLO SAN PEDRO\nNombre: ${nombres} ${apellidos}\nEspecialidad: ${SPEC.name}\nFecha: ${fecha}` + (msg ? `\nMensaje: ${msg}` : '') + `\nPalabra de la tarjeta: ${WORD}`;
+    $('#ctext').textContent = texto;
+    const btns = $('#cbtns'); btns.innerHTML = '';
+    const q = new URLSearchParams({usp:'pp_url'}); q.set(CONFIG.f.nombres, nombres); q.set(CONFIG.f.apellidos, apellidos); q.set(CONFIG.f.mensaje, aceptacion); if (msg) q.set(CONFIG.f.comentarios, msg);
+    const a=document.createElement('a'); a.className='btn'; a.target='_blank'; a.rel='noopener'; a.href = CONFIG.form + '?' + q.toString(); a.textContent='Confirmar en el formulario del Consorcio'; btns.appendChild(a);
+    $('#confirm').classList.add('on'); $('#sealed').classList.add('on'); $('#btnaccept').disabled = true; $('#anombre').readOnly = true; $('#aapellido').readOnly = true; $('#amsg').readOnly = true;
+    setTimeout(()=>$('#confirm').scrollIntoView({behavior: reduce?'auto':'smooth', block:'nearest'}), 300);
+  });
+})();
+</script>
+</body></html>
